@@ -1,0 +1,81 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+// Define a structure to represent items with a value and weight.
+struct Item {
+    double value;
+    double weight;
+};
+
+// Custom comparison function to sort items based on their value-to-weight ratio in descending order.
+bool compareItems(const Item& item1, const Item& item2) {
+    return (item1.value / item1.weight) > (item2.value / item2.weight);
+}
+
+// Function to solve the Fractional Knapsack problem using a greedy approach.
+double fractionalKnapsack(vector<Item>& items, double capacity) {
+    // Sort the items based on their value-to-weight ratio.
+    sort(items.begin(), items.end(), compareItems);
+    
+    double max_value = 0.0; // Initialize the maximum value achieved.
+    
+    // Loop through the sorted items to select items for the knapsack.
+    for (const Item& item : items) {
+        if (capacity <= 0) {
+            break; // If the knapsack is full, exit the loop.
+        }
+        
+        // If the current item's weight fits entirely into the knapsack.
+        if (item.weight <= capacity) {
+            max_value += item.value; // Add the full value of the item to the knapsack.
+            capacity -= item.weight; // Update the remaining capacity of the knapsack.
+        } else {
+            // If the item's weight partially fits, calculate the fraction of the item to include.
+            double fraction = capacity / item.weight;
+            max_value += fraction * item.value; // Add the fraction of the item's value to the knapsack.
+            capacity = 0; // The knapsack is full, exit the loop.
+        }
+    }
+    
+    return max_value; // Return the maximum value that can be obtained.
+}
+
+int main() {
+    int n;
+    cout << "Enter the number of items: ";
+    cin >> n;
+
+    vector<Item> items(n); // Create a vector to store item data.
+
+    cout << "Enter the value and weight of each item:\n";
+    for (int i = 0; i < n; ++i) {
+        cin >> items[i].value >> items[i].weight; // Input the value and weight of each item.
+    }
+
+    double capacity;
+    cout << "Enter the capacity of the knapsack: ";
+    cin >> capacity; // Input the capacity of the knapsack.
+
+    double max_value = fractionalKnapsack(items, capacity); // Call the function to solve the problem.
+
+    cout << "The maximum value that can be obtained is: " << max_value << endl; // Output the result.
+
+    return 0; // End of the program.
+}
+
+
+//OUTPUT
+Enter the number of items: 3
+Enter the value and weight of each item:
+10 2
+17 3
+5 2
+Enter the capacity of the knapsack: 3
+The maximum value that can be obtained is: 17
+
+
+T.C.-> O(n * log(n))
+S.C.-> O(n)
